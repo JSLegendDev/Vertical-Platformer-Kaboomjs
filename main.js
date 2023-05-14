@@ -26,6 +26,12 @@ loadSpriteAtlas('assets/tileset.png', {
         width: 60,
         height: 65
     },
+    'bigger-tree': {
+        x: 170,
+        y: 10,
+        width: 115,
+        height: 200
+    },
     'ground': {
         x: 80,
         y: 144,
@@ -43,6 +49,8 @@ loadSpriteAtlas('assets/tileset.png', {
 loadSprite('background-0', 'assets/background_0.png')
 loadSprite('background-1', 'assets/background_1.png')
 loadSprite('background-2', 'assets/background_2.png')
+
+setGravity(1000)
 
 add([
     sprite('background-0'),
@@ -96,9 +104,9 @@ const map = addLevel([
     '      012      ',
     '               ',
     ' 012           ',
-    '           012 ',
-    '333            ',
-    '444            ',
+    '           012                                    ',
+    '333                                               ',
+    '444                                               ',
     '444   012                                         ',
     '33333333333333333333333333333333333333333333333333',
     '44444444444444444444444444444444444444444444444444'
@@ -106,12 +114,58 @@ const map = addLevel([
     tileWidth: 16,
     tileHeight: 16,
     tiles: {
-        0: () => [sprite('platform-left')],
-        1: () => [sprite('platform-middle')],
-        2: () => [sprite('platform-right')],
-        3: () => [sprite('ground')],
-        4: () => [sprite('ground-deep')]
+        0: () => [
+            sprite('platform-left'),
+            area(),
+            body({isStatic: true})
+        ],
+        1: () => [
+            sprite('platform-middle'),
+            area(),
+            body({isStatic: true})
+        ],
+        2: () => [
+            sprite('platform-right'),
+            area(),
+            body({isStatic: true})
+        ],
+        3: () => [
+            sprite('ground'),
+            area(),
+            body({isStatic: true})
+        ],
+        4: () => [
+            sprite('ground-deep'),
+            area(),
+            body({isStatic: true})
+        ]
     }
 })
 
 map.use(scale(4))
+
+const biggerTree = add([
+    sprite('bigger-tree'),
+    scale(4),
+    pos(900,104)
+])
+
+const player = add([
+    rect(30,30),
+    area(),
+    body(),
+    pos(50,10),
+    {
+        speed: 500
+    }
+])
+
+onKeyDown('right', () => player.move(player.speed, 0))
+onKeyDown('left', () => player.move(-player.speed, 0))
+onKeyPress('up', () => {
+    if (player.isGrounded()) player.jump()
+})
+
+onUpdate(() => {
+    camPos(player.pos)
+})
