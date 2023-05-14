@@ -167,5 +167,10 @@ onKeyPress('up', () => {
 })
 
 onUpdate(() => {
-    camPos(player.pos)
+    camPos(player.pos.x, player.pos.y - 200)
+    // if (player.pos.y >= 610) {
+    //     camPos(player.pos.x, 400)  
+    // } else {
+    //     camPos(player.pos)
+    // }
 })
