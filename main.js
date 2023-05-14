@@ -5,10 +5,7 @@ kaboom({
 })
 
 loadSpriteAtlas('assets/tileset.png', {
-    'platform-left': {
-        x: 82,
-        y: 64,
-        width: 16,
+    'platform-left': { x: 82, y: 64, width: 16,
         height: 8
     },
     'platform-middle': {
@@ -22,13 +19,34 @@ loadSpriteAtlas('assets/tileset.png', {
         y: 64,
         width: 16,
         height: 8
-    }
+    },
+    'smaller-tree': {
+        x: 0,
+        y: 80,
+        width: 60,
+        height: 65
+    },
 })
 
 
-add([
-    sprite('platform-right'),
-    area(),
-    scale(8),
-    pos(center())
-])
+const map = addLevel([
+    '               ',
+    ' 012           ',
+    '      012      ',
+    '               ',
+    ' 012           ',
+    '           012 ',
+    '               ',
+    '      012      ',
+    '               '
+], {
+    tileWidth: 16,
+    tileHeight: 16,
+    tiles: {
+        0: () => [sprite('platform-left')],
+        1: () => [sprite('platform-middle')],
+        2: () => [sprite('platform-right')],
+    }
+})
+
+map.use(scale(4))
