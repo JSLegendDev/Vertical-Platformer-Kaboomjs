@@ -52,12 +52,24 @@ loadSprite('background-2', 'assets/background_2.png')
 loadSprite('idle-sprite', 'assets/Idle.png', {
     sliceX: 8,
     sliceY: 1,
-    anims: { 'idle-anim': {from: 0, to: 7, loop: true }}
+    anims: { 'idle-anim': { from: 0, to: 7, loop: true }}
 })
 loadSprite('run-sprite', 'assets/Run.png', {
     sliceX: 8,
     sliceY: 1,
-    anims: { 'run-anim': {from: 0, to: 7, loop: true }}
+    anims: { 'run-anim': { from: 0, to: 7, loop: true }}
+})
+
+loadSprite('jump-sprite', 'assets/Jump.png', {
+    sliceX: 2,
+    sliceY: 1,
+    anims: { 'jump-anim': { from: 0, to: 1, loop: true }}
+})
+
+loadSprite('fall-sprite', 'assets/Fall.png', {
+    sliceX: 2,
+    sliceY: 1,
+    anims: { 'fall-anim' : { from: 0, to: 1, loop: true }}
 })
 
 setGravity(1000)
@@ -168,25 +180,79 @@ const player = add([
     body(),
     pos(900,10),
     {
-        speed: 500
+        speed: 500,
+        previousHeight: null,
+        heightDelta: 0,
     }
 ])
 
 player.play('idle-anim')
 
-onKeyDown('right', () => player.move(player.speed, 0))
-onKeyDown('left', () => player.move(-player.speed, 0))
+onKeyDown('right', () => {
+    if (player.curAnim() !== 'run-anim' && player.isGrounded()) {
+        player.use(sprite('run-sprite'))
+        player.play('run-anim')
+    }
+
+    player.move(player.speed, 0)
+})
+
+onKeyRelease('right', () => {
+    player.use(sprite('idle-sprite'))
+    player.play('idle-anim')
+})
+
+onKeyDown('left', () => {
+    if (player.curAnim() !== 'run-anim' && player.isGrounded()) {
+        player.use(sprite('run-sprite'))
+        player.play('run-anim')
+    }
+
+    player.move(-player.speed, 0)
+    player.flipX = true
+})
+
+onKeyRelease('left', () => {
+    player.use(sprite('idle-sprite'))
+    player.play('idle-anim')
+    player.flipX = true
+})
+
 onKeyPress('up', () => {
-    if (player.isGrounded()) player.jump()
+    if (player.isGrounded()) {
+        if (player.curAnim() !== 'jump-anim') {
+            const direction = player.flipX
+            player.use(sprite('jump-sprite'))
+            player.play('jump-anim')
+            player.flipX = direction
+        }
+
+        player.jump()
+    }
 })
 
 camScale(1.5)
 
 onUpdate(() => {
+
+    if (player.previousHeight) {
+        player.heightDelta = player.previousHeight - player.pos.y
+    }
+
+    player.previousHeight = player.pos.y
+
     camPos(player.pos.x, player.pos.y - 100)
-    // if (player.pos.y >= 610) {
-    //     camPos(player.pos.x, 400)  
-    // } else {
-    //     camPos(player.pos)
-    // }
+    if (player.curAnim() !== 'run-anim' && player.isGrounded()) {
+        const direction = player.flipX
+        player.use(sprite('idle-sprite'))
+        player.play('idle-anim')
+        player.flipX = direction
+    }
+
+    if (player.curAnim() !== 'fall-anim' && !player.isGrounded() && player.heightDelta < 0) {
+        const direction = player.flipX
+        player.use(sprite('fall-sprite'))
+        player.play('fall-anim')
+        player.flipX = direction
+    }
 })
