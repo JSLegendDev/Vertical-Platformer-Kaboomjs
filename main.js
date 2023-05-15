@@ -116,22 +116,22 @@ add([
 const tree = add([
     sprite('smaller-tree'),
     scale(4),
-    pos(-50, 190)
+    pos(40, 190)
 ])
 
 const map = addLevel([
-    '                                                  ',
-    '                                                  ',
-    ' 012                  012                  012    ',
-    '      012                                         ',
-    '                                 012              ',
-    ' 012                                              ',
-    '           012                                    ',
-    '333                                    012        ',
-    '444                                               ',
-    '444   012                                         ',
-    '33333333333333333333333333333333333333333333333333',
-    '44444444444444444444444444444444444444444444444444'
+    '5                                                     5',
+    '5                                                     5',
+    '5   012                  012                  012     5',
+    '5        012                                          5',
+    '5                                   012               5',
+    '5   012                                               5',
+    '5             012                                     5',
+    ' 333333                                    012        5',
+    ' 444444                                               5',
+    ' 444444   012                                         5',
+    ' 33333333333333333333333333333333333333333333333333333 ',
+    ' 44444444444444444444444444444444444444444444444444444 '
 ], {
     tileWidth: 16,
     tileHeight: 16,
@@ -158,6 +158,12 @@ const map = addLevel([
         ],
         4: () => [
             sprite('ground-deep'),
+            area(),
+            body({isStatic: true})
+        ],
+        5: () => [
+            rect(16, 16),
+            opacity(0),
             area(),
             body({isStatic: true})
         ]
@@ -237,7 +243,16 @@ onUpdate(() => {
 
     player.previousHeight = player.pos.y
 
-    camPos(player.pos.x, player.pos.y - 100)
+    const cameraLeftBound = 550
+    const cameraRightBound = 3000
+
+    if (cameraLeftBound > player.pos.x) {
+        camPos(cameraLeftBound, player.pos.y - 100)
+    } else if (cameraRightBound < player.pos.x) {
+        camPos(cameraRightBound, player.pos.y - 100)
+    } else {
+        camPos(player.pos.x, player.pos.y - 100)
+    }
 
     if (player.curAnim() !== 'run-anim' && player.isGrounded()) {
         player.use(sprite('idle-sprite'))
