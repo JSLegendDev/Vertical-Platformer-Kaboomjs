@@ -120,14 +120,14 @@ const tree = add([
 ])
 
 const map = addLevel([
-    '               ',
-    '               ',
-    ' 012           ',
-    '      012      ',
-    '               ',
-    ' 012           ',
+    '                                                  ',
+    '                                                  ',
+    ' 012                  012                  012    ',
+    '      012                                         ',
+    '                                 012              ',
+    ' 012                                              ',
     '           012                                    ',
-    '333                                               ',
+    '333                                    012        ',
     '444                                               ',
     '444   012                                         ',
     '33333333333333333333333333333333333333333333333333',
@@ -183,6 +183,7 @@ const player = add([
         speed: 500,
         previousHeight: null,
         heightDelta: 0,
+        direction: 'right'
     }
 ])
 
@@ -193,6 +194,8 @@ onKeyDown('right', () => {
         player.use(sprite('run-sprite'))
         player.play('run-anim')
     }
+
+    if (player.direction !== 'right') player.direction = 'right'
 
     player.move(player.speed, 0)
 })
@@ -208,25 +211,18 @@ onKeyDown('left', () => {
         player.play('run-anim')
     }
 
+    if (player.direction !== 'left') player.direction = 'left'
+
     player.move(-player.speed, 0)
-    player.flipX = true
 })
 
 onKeyRelease('left', () => {
     player.use(sprite('idle-sprite'))
     player.play('idle-anim')
-    player.flipX = true
 })
 
 onKeyPress('up', () => {
     if (player.isGrounded()) {
-        if (player.curAnim() !== 'jump-anim') {
-            const direction = player.flipX
-            player.use(sprite('jump-sprite'))
-            player.play('jump-anim')
-            player.flipX = direction
-        }
-
         player.jump()
     }
 })
@@ -242,17 +238,25 @@ onUpdate(() => {
     player.previousHeight = player.pos.y
 
     camPos(player.pos.x, player.pos.y - 100)
+
     if (player.curAnim() !== 'run-anim' && player.isGrounded()) {
-        const direction = player.flipX
         player.use(sprite('idle-sprite'))
         player.play('idle-anim')
-        player.flipX = direction
+    }
+
+    if (player.curAnim() !== 'jump-anim' && !player.isGrounded() && player.heightDelta > 0) {
+        player.use(sprite('jump-sprite'))
+        player.play('jump-anim')
     }
 
     if (player.curAnim() !== 'fall-anim' && !player.isGrounded() && player.heightDelta < 0) {
-        const direction = player.flipX
         player.use(sprite('fall-sprite'))
         player.play('fall-anim')
-        player.flipX = direction
+    }
+
+    if (player.direction === 'left') {
+        player.flipX = true
+    } else {
+        player.flipX = false
     }
 })
