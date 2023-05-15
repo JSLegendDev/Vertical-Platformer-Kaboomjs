@@ -49,6 +49,16 @@ loadSpriteAtlas('assets/tileset.png', {
 loadSprite('background-0', 'assets/background_0.png')
 loadSprite('background-1', 'assets/background_1.png')
 loadSprite('background-2', 'assets/background_2.png')
+loadSprite('idle-sprite', 'assets/Idle.png', {
+    sliceX: 8,
+    sliceY: 1,
+    anims: { 'idle-anim': {from: 0, to: 7, loop: true }}
+})
+loadSprite('run-sprite', 'assets/Run.png', {
+    sliceX: 8,
+    sliceY: 1,
+    anims: { 'run-anim': {from: 0, to: 7, loop: true }}
+})
 
 setGravity(1000)
 
@@ -151,14 +161,18 @@ const biggerTree = add([
 ])
 
 const player = add([
-    rect(30,30),
-    area(),
+    sprite('idle-sprite'),
+    scale(2),
+    area({shape: new Rect(vec2(0), 32, 32), offset: vec2(0,32)}),
+    anchor('center'),
     body(),
-    pos(50,10),
+    pos(900,10),
     {
         speed: 500
     }
 ])
+
+player.play('idle-anim')
 
 onKeyDown('right', () => player.move(player.speed, 0))
 onKeyDown('left', () => player.move(-player.speed, 0))
@@ -166,8 +180,10 @@ onKeyPress('up', () => {
     if (player.isGrounded()) player.jump()
 })
 
+camScale(1.5)
+
 onUpdate(() => {
-    camPos(player.pos.x, player.pos.y - 200)
+    camPos(player.pos.x, player.pos.y - 100)
     // if (player.pos.y >= 610) {
     //     camPos(player.pos.x, 400)  
     // } else {
