@@ -245,13 +245,14 @@ onUpdate(() => {
 
     const cameraLeftBound = 550
     const cameraRightBound = 3000
+    const cameraVerticalOffset = player.pos.y - 100
 
     if (cameraLeftBound > player.pos.x) {
-        camPos(cameraLeftBound, player.pos.y - 100)
+        camPos(cameraLeftBound, cameraVerticalOffset)
     } else if (cameraRightBound < player.pos.x) {
-        camPos(cameraRightBound, player.pos.y - 100)
+        camPos(cameraRightBound, cameraVerticalOffset)
     } else {
-        camPos(player.pos.x, player.pos.y - 100)
+        camPos(player.pos.x, cameraVerticalOffset)
     }
 
     if (player.curAnim() !== 'run-anim' && player.isGrounded()) {
