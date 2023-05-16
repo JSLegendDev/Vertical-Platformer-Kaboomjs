@@ -1,7 +1,6 @@
 kaboom({
     width: 1280,
-    height: 720,
-    scale: 0.7
+    height: 720
 })
 
 loadSpriteAtlas('assets/tileset.png', {
